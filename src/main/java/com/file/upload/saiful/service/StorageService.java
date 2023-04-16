@@ -1,5 +1,6 @@
 package com.file.upload.saiful.service;
 
+import com.file.upload.saiful.dto.FileInfo;
 import com.file.upload.saiful.entity.FileData;
 import com.file.upload.saiful.entity.ImageData;
 import com.file.upload.saiful.respository.FileDataRepository;
@@ -12,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -66,6 +69,22 @@ public class StorageService {
         String filePath=fileData.get().getFilePath();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
+    }
+
+    public List<FileInfo> getAllImage() throws IOException {
+        List<FileInfo> fileInfos = new ArrayList<>();
+        List<FileData> fileDataList = fileDataRepository.findAll();
+        fileDataList.forEach(fileData -> {
+            try {
+                String filePath=fileData.getFilePath();
+                byte[] images = Files.readAllBytes(new File(filePath).toPath());
+                FileInfo fileInfo = new FileInfo(fileData.getName(), fileData.getFilePath(), images);
+                fileInfos.add(fileInfo);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return fileInfos;
     }
 
 
