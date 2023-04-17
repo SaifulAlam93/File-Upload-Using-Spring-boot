@@ -26,13 +26,15 @@ public class StorageService {
     @Autowired
     private FileDataRepository fileDataRepository;
 
-    private final String FOLDER_PATH="E://img/static/image/";
+    private final String FOLDER_PATH="H://img/";
 
     public String uploadImage(MultipartFile file) throws IOException {
+
         ImageData imageData = repository.save(ImageData.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(file.getBytes())).build());
+
         if (imageData != null) {
             return "file uploaded successfully : " + file.getOriginalFilename();
         }
@@ -49,12 +51,18 @@ public class StorageService {
 
 
     public String uploadImageToFileSystem(MultipartFile file) throws IOException {
-        String filePath=FOLDER_PATH+file.getOriginalFilename();
-
-        FileData fileData=fileDataRepository.save(FileData.builder()
+            String filePath = FOLDER_PATH+file.getOriginalFilename();
+        FileData fileData=fileDataRepository.save(
+                FileData.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .filePath(filePath).build());
+
+//        FileData fileDataOld = new FileData();
+//        fileDataOld.setName(file.getOriginalFilename());
+//        fileDataOld.setType(file.getContentType());
+//        fileDataOld.setFilePath(filePath);
+//        fileDataOld=fileDataRepository.save(fileDataOld);
 
         file.transferTo(new File(filePath));
 
@@ -65,8 +73,10 @@ public class StorageService {
     }
 
     public byte[] downloadImageFromFileSystem(String fileName) throws IOException {
-        Optional<FileData> fileData = fileDataRepository.findByName(fileName);
-        String filePath=fileData.get().getFilePath();
+//        Optional<FileData> fileData = fileDataRepository.findByName(fileName);
+        FileData fileData = fileDataRepository.findAllSortedByNameUsingNative(fileName);
+        String filePath=fileData.getFilePath();
+//        String filePath=fileData.get().getFilePath();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }
