@@ -50,19 +50,37 @@ public class StorageService {
     }
 
 
+    public List<FileInfo> downloadImageList() throws IOException {
+        List<FileInfo> fileInfos = new ArrayList<>();
+        List<ImageData> fileDataList = repository.findAll();
+        fileDataList.forEach(fileData -> {
+            try {
+                byte[] images = ImageUtils.decompressImage(fileData.getImageData());
+                FileInfo fileInfo = new FileInfo(fileData.getName(), images);
+                fileInfos.add(fileInfo);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return fileInfos;
+    }
+
     public String uploadImageToFileSystem(MultipartFile file) throws IOException {
-            String filePath = FOLDER_PATH+file.getOriginalFilename();
+
+        String filePath = FOLDER_PATH+file.getOriginalFilename();
         FileData fileData=fileDataRepository.save(
                 FileData.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .filePath(filePath).build());
 
-//        FileData fileDataOld = new FileData();
-//        fileDataOld.setName(file.getOriginalFilename());
-//        fileDataOld.setType(file.getContentType());
-//        fileDataOld.setFilePath(filePath);
-//        fileDataOld=fileDataRepository.save(fileDataOld);
+
+//        FileData fileData  = new FileData();
+//        fileData.setName(file.getOriginalFilename());
+//        fileData.setType(file.getContentType());
+//        fileData.setFilePath(filePath);
+//        fileDataRepository.save(fileData);
+
 
         file.transferTo(new File(filePath));
 

@@ -25,19 +25,25 @@ public class Controller {
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         String uploadImage = service.uploadImage(file);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
+        return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
     }
 
     @GetMapping("/{fileName}")
     public ResponseEntity<?> downloadImage(@PathVariable String fileName) {
         byte[] imageData = service.downloadImage(fileName);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
 
     }
 
+
+    @GetMapping
+    public ResponseEntity<?> downloadImageList() throws IOException {
+        List<FileInfo> fileInfoList = service.downloadImageList();
+        return ResponseEntity.status(HttpStatus.OK).body(fileInfoList);
+    }
 
     @PostMapping("/fileSystem")
     public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image") MultipartFile file) throws IOException {
@@ -50,6 +56,7 @@ public class Controller {
             message = "Could not upload the file: " + file.getOriginalFilename() + ". Error: " + e.getMessage();
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
+
     }
 
     @GetMapping("/fileSystem/{fileName}")
@@ -58,13 +65,11 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
-
     }
 
     @GetMapping("/fileSystem")
     public ResponseEntity<?> getAllImage() throws IOException {
         List<FileInfo> fileInfoList = service.getAllImage();
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(fileInfoList);
+        return ResponseEntity.status(HttpStatus.OK).body(fileInfoList);
     }
 }
