@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.file.upload.saiful.StorageServiceApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.555 s -- in com.file.upload.saiful.StorageServiceApplicationTests

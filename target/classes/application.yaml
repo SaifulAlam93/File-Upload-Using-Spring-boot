@@ -1,0 +1,53 @@
+## application.yml
+#spring:
+#  application:
+#    name: file-service
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/file_service?useSSL=false&serverTimezone=UTC
+#    username: ${DB_USERNAME:root}
+#    password: ${DB_PASSWORD:password}
+#    hikari:
+#      maximum-pool-size: 10
+#      connection-timeout: 30000
+#      idle-timeout: 300000
+#      max-lifetime: 1200000
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
+#        format_sql: true
+#        jdbc:
+#          batch_size: 20
+#          lob:
+#            non_contextual_creation: true
+#    show-sql: false
+#  servlet:
+#    multipart:
+#      max-file-size: 50MB
+#      max-request-size: 50MB
+#
+#server:
+#  port: 8080
+#
+## File Storage Configuration
+#file:
+#  storage:
+#    local:
+#      directory: ${UPLOAD_DIR:./uploads}
+#    max-file-size: 52428800 # 50MB
+#    allowed-content-types:
+#      - image/jpeg
+#      - image/png
+#      - image/gif
+#      - application/pdf
+#      - text/plain
+#      - application/msword
+#      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+#
+## Logging
+#logging:
+#  level:
+#    com.example.fileservice: INFO
+#    org.hibernate.SQL: WARN

@@ -45,18 +45,17 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK).body(fileInfoList);
     }
 
-    @PostMapping("/fileSystem")
-    public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image") MultipartFile file) throws IOException {
+    @PostMapping( value ="/fileSystem",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image") MultipartFile file)
+            throws IOException {
         String message = "";
         try {
-            String uploadImage = service.uploadImageToFileSystem(file);
-            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            message = service.uploadImageToFileSystem(file);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + ". Error: " + e.getMessage();
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
-
     }
 
     @GetMapping("/fileSystem/{fileName}")
