@@ -10,6 +10,7 @@ import com.file.upload.saiful.respository.StorageRepository;
 import com.file.upload.saiful.util.ImageUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -109,9 +110,6 @@ public class StorageService {
         return Files.readAllBytes(new File(fileData.getFilePath()).toPath());
     }
 
-
-
-
     public List<FileInfo> getAllImage() {
         List<FileInfo> fileInfos = new ArrayList<>();
         List<FileData> fileDataList = fileDataRepository.findAll();
@@ -119,14 +117,45 @@ public class StorageService {
         fileDataList.forEach(fileData -> {
             try {
                 byte[] image = Files.readAllBytes(new File(fileData.getFilePath()).toPath());
-                fileInfos.add(new FileInfo(fileData.getName(), fileData.getFilePath(), image));
+                FileInfo fn = new FileInfo(fileData.getName(), fileData.getFilePath(), image);
+                fileInfos.add(fn);
             } catch (IOException e) {
-                throw new RuntimeException("Error reading file: " + fileData.getName(), e);
+//                throw new RuntimeException("Error reading file: " + fileData.getName(), e);
+                System.out.println("Error reading file: " + fileData.getName()+"    "+ e);
             }
         });
 
         return fileInfos;
     }
+
+
+    public void delete(Long id) {
+        FileData fileData = fileDataRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found with id: " + id));
+
+        File file = new File(fileData.getFilePath());
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new RuntimeException("Failed to delete file from disk: " + fileData.getFilePath());
+            }
+        }
+
+        fileDataRepository.deleteById(id);
+    }
+
+    public void deleteByName(String name) {
+
+        FileData fileData = fileDataRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("File not found: " + name));
+
+        File file = new File(fileData.getFilePath());
+        if (file.exists() && !file.delete()) {
+            throw new RuntimeException("Failed to delete file from disk: " + fileData.getFilePath());
+        }
+
+        fileDataRepository.delete(fileData);
+    }
+
 }
 
 

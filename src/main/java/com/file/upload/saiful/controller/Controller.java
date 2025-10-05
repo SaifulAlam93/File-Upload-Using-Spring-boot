@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/image")
-@CrossOrigin(origins = "http://192.168.20.203:4200", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:4200/") // your Angular frontend
 public class Controller {
 
 
@@ -45,7 +45,7 @@ public class Controller {
         return ResponseEntity.status(HttpStatus.OK).body(fileInfoList);
     }
 
-    @PostMapping( value ="/fileSystem",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/fileSystem", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image") MultipartFile file)
             throws IOException {
         String message = "";
@@ -70,5 +70,28 @@ public class Controller {
     public ResponseEntity<?> getAllImage() throws IOException {
         List<FileInfo> fileInfoList = service.getAllImage();
         return ResponseEntity.status(HttpStatus.OK).body(fileInfoList);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.ok(new ResponseMessage("File deleted successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Could not delete file: " + e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/name/{name}")
+    public ResponseEntity<?> deleteFileByName(@PathVariable String name) {
+        try {
+            service.deleteByName(name);
+            return ResponseEntity.ok(new ResponseMessage("File deleted successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Could not delete file: " + e.getMessage());
+        }
     }
 }
